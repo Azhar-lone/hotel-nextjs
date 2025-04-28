@@ -52,7 +52,7 @@ export function HeroSection({
   return (
     <section
       ref={sectionRef}
-      className={cn("hero-section overflow-hidden", className)}
+      className={cn("   mx-auto px-4 py-8 md:py-16 bg-secondary w-full rounded-3xl", className)}
     >
       <div className="parallax-bg absolute inset-0">
         <Image
@@ -63,7 +63,7 @@ export function HeroSection({
           priority
         />
       </div>
-      <div className="hero-content container mx-auto px-4">
+      <div className=" flex flex-col items-start mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -127,7 +127,7 @@ export function HeroSection({
           transition={{ duration: 1, delay: 1.5 }}
         >
           <motion.div
-            className="w-10 h-10 rounded-full bg-white flex items-center justify-center cursor-pointer hover:bg-gold transition-colors"
+            className="w-10 h-10 rounded-full bg-background flex items-center justify-center cursor-pointer hover:bg-gold transition-colors"
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Number.POSITIVE_INFINITY, duration: 2 }}
             onClick={() => {
@@ -137,7 +137,7 @@ export function HeroSection({
               });
             }}
           >
-            <span className="text-navy-dark">↓</span>
+            <span >↓</span>
           </motion.div>
         </motion.div>
       )}
