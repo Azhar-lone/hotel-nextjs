@@ -1,227 +1,155 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ModeToggle } from "@/components/myUi/mode-toggle";
 import { LanguageSelector } from "@/components/myUi/language-selector";
 import { useLanguage } from "@/components/myUi/language-provider";
 import { cn } from "@/lib/utils";
+import Slider from "./Slider";
+import {
+  HammerIcon,
+  BookTextIcon,
+  PhoneIcon,
+  Grid2x2Check,
+  NetworkIcon,
+} from "lucide-react"; // import your icons
 
-export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
+const NavItems = [
+  {
+    text: "Home",
+    href: "/",
+  },
+  {
+    text: "Rooms",
+    href: "/rooms",
+  },
+  {
+    text: "Dining",
+    href: "/dining",
+  },
+  {
+    text: "Spa",
+    href: "/spa",
+  },
+  {
+    text: "More",
+    href: "#",
+    listItems: [
+      { text: "Facilities", href: "/facilities", Icon: Grid2x2Check },
+      { text: "Events", href: "/events", Icon: HammerIcon },
+      { text: "Gallery", href: "/gallery", Icon: BookTextIcon },
+      { text: "About", href: "/about", Icon: NetworkIcon },
+      { text: "Contact", href: "/contact-us", Icon: PhoneIcon },
+    ],
+  },
+];
+
+export default function Header() {
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const pathname = usePathname();
   const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 10;
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
+      if (window.scrollY < lastScrollY) {
+        setShowHeader(true); // Scrolling up
+      } else {
+        setShowHeader(false); // Scrolling down
       }
+      setLastScrollY(window.scrollY);
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [scrolled]);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 w-full z-50 transition-all duration-300",
-        scrolled
-          ? "bg-background/90 backdrop-blur-md shadow-md py-3"
-          : "bg-transparent py-6"
+        "container mx-auto bg-background z-50 sticky top-0 px-4 py-4 flex justify-between items-center transition-transform duration-300",
+        showHeader ? "translate-y-0" : "-translate-y-full"
       )}
     >
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link
-          href="/"
-          className="text-gold font-serif font-bold text-2xl transition-transform hover:scale-105"
-        >
+      <div className="flex items-center gap-4">
+        <Link href="/" className="text-gold font-serif font-bold text-2xl">
           LUXURY
         </Link>
+      </div>
 
-        <div className="flex items-center gap-4">
-          <LanguageSelector />
-          <ModeToggle />
+      {/* Desktop Navigation */}
+      <nav className="hidden md:flex items-center space-x-8">
+        {NavItems.map((item) => (
+          <div key={item.href} className="relative group">
+            <Link
+              href={item.href}
+              className={cn(
+                "font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold hover:after:w-full after:transition-all",
+                pathname === item.href ? "text-primary" : "text-foreground"
+              )}
+            >
+              {item.text}
+            </Link>
 
-          <div className="hidden md:flex gap-8">
-            <Link
-              href="/"
-              className={cn(
-                "font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold hover:after:w-full after:transition-all",
-                scrolled
-                  ? "text-foreground hover:text-gold"
-                  : "text-white hover:text-gold"
-              )}
-            >
-              {t("nav.home")}
-            </Link>
-            <Link
-              href="/about"
-              className={cn(
-                "font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold hover:after:w-full after:transition-all",
-                scrolled
-                  ? "text-foreground hover:text-gold"
-                  : "text-white hover:text-gold"
-              )}
-            >
-              About
-            </Link>
-            <Link
-              href="/rooms"
-              className={cn(
-                "font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold hover:after:w-full after:transition-all",
-                scrolled
-                  ? "text-foreground hover:text-gold"
-                  : "text-white hover:text-gold"
-              )}
-            >
-              {t("nav.rooms")}
-            </Link>
-            <Link
-              href="/facilities"
-              className={cn(
-                "font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold hover:after:w-full after:transition-all",
-                scrolled
-                  ? "text-foreground hover:text-gold"
-                  : "text-white hover:text-gold"
-              )}
-            >
-              {t("nav.facilities")}
-            </Link>
-            <Link
-              href="/dining"
-              className={cn(
-                "font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold hover:after:w-full after:transition-all",
-                scrolled
-                  ? "text-foreground hover:text-gold"
-                  : "text-white hover:text-gold"
-              )}
-            >
-              Dining
-            </Link>
-            <Link
-              href="/spa"
-              className={cn(
-                "font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold hover:after:w-full after:transition-all",
-                scrolled
-                  ? "text-foreground hover:text-gold"
-                  : "text-white hover:text-gold"
-              )}
-            >
-              Spa
-            </Link>
-            <Link
-              href="/events"
-              className={cn(
-                "font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold hover:after:w-full after:transition-all",
-                scrolled
-                  ? "text-foreground hover:text-gold"
-                  : "text-white hover:text-gold"
-              )}
-            >
-              Events
-            </Link>
-            <Link
-              href="/gallery"
-              className={cn(
-                "font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold hover:after:w-full after:transition-all",
-                scrolled
-                  ? "text-foreground hover:text-gold"
-                  : "text-white hover:text-gold"
-              )}
-            >
-              Gallery
-            </Link>
-            <Link
-              href="/contact-us"
-              className={cn(
-                "font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold hover:after:w-full after:transition-all",
-                scrolled
-                  ? "text-foreground hover:text-gold"
-                  : "text-white hover:text-gold"
-              )}
-            >
-              {t("nav.contact")}
-            </Link>
+            {/* Dropdown for listItems */}
+            {item.listItems && (
+              <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-background shadow-lg rounded-md mt-2 py-2 min-w-[150px]">
+                {item.listItems.map((child) => (
+                  <Link
+                    key={child.href}
+                    href={child.href}
+                    className="px-4 py-2 hover:bg-muted flex items-center gap-2"
+                  >
+                    <child.Icon className="h-4 w-4" />
+                    {child.text}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
+        ))}
+      </nav>
 
-          <Sheet>
-            <SheetTrigger asChild className="md:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                className={scrolled ? "text-foreground" : "text-white"}
+      {/* Right section */}
+      <div className="flex items-center gap-2">
+        <LanguageSelector />
+        <ModeToggle />
+
+        {/* Mobile Slider */}
+        <Slider side="right" className="flex flex-col gap-4 items-center py-10">
+          {NavItems.map((item) => (
+            <div key={item.href} className="flex flex-col items-center">
+              <Link
+                href={item.href}
+                className={cn(
+                  "text-lg font-medium",
+                  pathname === item.href
+                    ? "text-primary"
+                    : "text-foreground hover:text-primary"
+                )}
               >
-                <Menu />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="bg-card">
-              <nav className="flex flex-col gap-4 mt-8">
-                <Link
-                  href="/"
-                  className="text-foreground hover:text-gold transition-colors py-2 border-b border-border"
-                >
-                  {t("nav.home")}
-                </Link>
-                <Link
-                  href="/about"
-                  className="text-foreground hover:text-gold transition-colors py-2 border-b border-border"
-                >
-                  About
-                </Link>
-                <Link
-                  href="/rooms"
-                  className="text-foreground hover:text-gold transition-colors py-2 border-b border-border"
-                >
-                  {t("nav.rooms")}
-                </Link>
-                <Link
-                  href="/facilities"
-                  className="text-foreground hover:text-gold transition-colors py-2 border-b border-border"
-                >
-                  {t("nav.facilities")}
-                </Link>
-                <Link
-                  href="/dining"
-                  className="text-foreground hover:text-gold transition-colors py-2 border-b border-border"
-                >
-                  Dining
-                </Link>
-                <Link
-                  href="/spa"
-                  className="text-foreground hover:text-gold transition-colors py-2 border-b border-border"
-                >
-                  Spa
-                </Link>
-                <Link
-                  href="/events"
-                  className="text-foreground hover:text-gold transition-colors py-2 border-b border-border"
-                >
-                  Events
-                </Link>
-                <Link
-                  href="/gallery"
-                  className="text-foreground hover:text-gold transition-colors py-2 border-b border-border"
-                >
-                  Gallery
-                </Link>
-                <Link
-                  href="/contact-us"
-                  className="text-foreground hover:text-gold transition-colors py-2 border-b border-border"
-                >
-                  {t("nav.contact")}
-                </Link>
-              </nav>
-            </SheetContent>
-          </Sheet>
-        </div>
+                {item.text}
+              </Link>
+
+              {/* Mobile Dropdown for More */}
+              {item.listItems && (
+                <div className="flex flex-col gap-2 mt-2">
+                  {item.listItems.map((child) => (
+                    <Link
+                      key={child.href}
+                      href={child.href}
+                      className="text-sm text-muted-foreground hover:text-primary"
+                    >
+                      {child.text}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </Slider>
       </div>
     </header>
   );
